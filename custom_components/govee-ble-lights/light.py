@@ -27,7 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 
 UUID_CONTROL_CHARACTERISTIC = '00010203-0405-0607-0809-0a0b0c0d2b11'
 EFFECT_PARSE = re.compile("\[(\d+)/(\d+)/(\d+)/(\d+)]")
-SEGMENTED_MODELS = ['H6053', 'H6072', 'H6102', 'H6199']
+SEGMENTED_MODELS = ['H6053', 'H6072', 'H6102', 'H6147', 'H6199', 'H705A']
 
 class LedCommand(IntEnum):
     """ A control command packet's type. """
@@ -242,9 +242,11 @@ class GoveeBluetoothLight(LightEntity):
             red, green, blue = kwargs.get(ATTR_RGB_COLOR)
 
             if self._is_segmented:
+                segment_bitfield1 = 0xFF;
+                segment_bitfield2 = 0x7F;
                 commands.append(self._prepareSinglePacketData(LedCommand.COLOR,
                                                               [LedMode.SEGMENTS, 0x01, red, green, blue, 0x00, 0x00, 0x00,
-                                                               0x00, 0x00, 0xFF, 0x7F]))
+                                                               0x00, 0x00, segment_bitfield1, segment_bitfield2]))
             else:
                 commands.append(self._prepareSinglePacketData(LedCommand.COLOR, [LedMode.MANUAL, red, green, blue]))
         if ATTR_EFFECT in kwargs:
